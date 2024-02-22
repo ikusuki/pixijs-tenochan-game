@@ -13,16 +13,16 @@ document.body.appendChild(app.view);
 const left = Texture.from("tenochan left.png");
 const right = Texture.from("tenochan side.png");
 
+// PNGファイルからスプライトを作成
 const tenochan = new Sprite(right);
 
-tenochan.anchor.set(0.5); // center of the sprite (0,0 is top left, 1,1 is bottom right)
-
-tenochan.x = app.screen.width / 2;
-tenochan.y = app.screen.height / 2;
-
-// Rotate around the center
+// スプライトの中心を定義
 tenochan.anchor.x = 0.5;
 tenochan.anchor.y = 0.5;
+
+// キャンバスの中央に配置
+tenochan.x = app.screen.width / 2;
+tenochan.y = app.screen.height / 2;
 
 tenochan.width = 50;
 tenochan.height = 50;
@@ -44,8 +44,7 @@ const onKeyDown = (e: KeyboardEvent) => {
 
 document.addEventListener("keydown", onKeyDown);
 
-// Add fish
-
+// 左右バージョンの魚
 const leftFish = Texture.from("fish.png");
 const rightFish = Texture.from("fish right.png");
 const food: Sprite = Sprite.from(leftFish);
@@ -69,10 +68,12 @@ const isColliding = (a: Sprite, b: Sprite) => {
   );
 };
 
+// 2つの間のランダムな数値を生成する関数
 const randomIntFromInterval = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
+// 現在の魚の移動方向と速度、およびそれらを変更するための関数
 let directionX = "left";
 let directionY = "down";
 let speed = randomIntFromInterval(1, 10);
@@ -105,6 +106,7 @@ const onTenochanFeeding = () => {
   food.y = 0;
   food.width = randomIntFromInterval(20, 80);
   food.height = food.width;
+  // テノちゃんを太らせる 😂
   tenochan.width += 10;
   tenochan.height += 10;
   if (tenochan.width > 200) {
@@ -112,6 +114,9 @@ const onTenochanFeeding = () => {
   }
 };
 
+// 魚をランダムに移動させるためのメイン関数。
+// ランダムなタイミングで更新されるため、時々魚が停止することもあり、
+// これは良いことです。
 const randomlyMoveFish = () => {
   if (directionX === "left") {
     food.x -= Math.random() * speed;
@@ -123,11 +128,13 @@ const randomlyMoveFish = () => {
   if (directionY === "down") food.y += Math.random() * speed;
   else food.y -= Math.random() * speed;
 
+  // 方向や速度をたまにしか変更しない
   if (randomIntFromInterval(1, 500) > 495) changeXDirection();
   if (randomIntFromInterval(1, 500) > 495) changeYDirection();
   if (randomIntFromInterval(1, 500) > 495) changeSpeed();
 };
 
+// キャンバス内に魚があることを確認する関数
 const ensureFishInBounds = () => {
   if (food.y > app.screen.height - 40) food.y = app.screen.height - 40;
   if (food.y < 40) food.y = 40;
